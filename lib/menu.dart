@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 
+/// Halaman utama aplikasi MyPortfolio Mobile.
+///
+/// Dibuat sebagai [StatelessWidget] karena semua isinya statis:
+/// identitas pemilik dan daftar tombol tidak berubah selama aplikasi berjalan.
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
-  final String npm = "2406000001";
-  final String nama = "Burhan";
-  final String kelas = "PBP A";
+  // Identitas pemilik portofolio yang ditampilkan pada InfoCard.
+  final String npm = "2506657075"; // TODO: ganti dengan NPM kamu
+  final String nama = "Muhammad Iqbal";
+  final String kelas = "PBP C";
 
+  // Daftar tombol aksi. Setiap tombol punya nama, ikon, dan warna latar sendiri,
+  // sehingga ItemCard tidak perlu percabangan if-else untuk menentukan warna.
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Proyek", Icons.folder),
-    ItemHomepage("Tambah Proyek", Icons.add_circle),
-    ItemHomepage("Logout", Icons.logout),
+    ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue),
+    ItemHomepage("Tambah Proyek", Icons.add_circle, Colors.green),
+    ItemHomepage("Logout", Icons.logout, Colors.red),
   ];
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold menyediakan kerangka halaman: AppBar di atas dan body di bawahnya.
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -28,11 +36,12 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Baris berisi tiga kartu identitas yang disusun sejajar.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
+                InfoCard(title: 'Nama', content: nama),
                 InfoCard(title: 'Class', content: kelas),
               ],
             ),
@@ -44,15 +53,20 @@ class MyHomePage extends StatelessWidget {
                     padding: EdgeInsets.only(top: 16.0),
                     child: Text(
                       'Selamat datang di MyPortfolio Mobile!',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                      ),
                     ),
                   ),
+                  // Kisi 3 kolom untuk menampilkan tombol-tombol aksi.
                   GridView.count(
                     primary: true,
                     padding: const EdgeInsets.all(20),
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     crossAxisCount: 3,
+                    // shrinkWrap agar tinggi kisi menyesuaikan jumlah tombol.
                     shrinkWrap: true,
                     children: items.map((ItemHomepage item) {
                       return ItemCard(item);
@@ -68,6 +82,8 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+/// Kartu kecil yang menampilkan satu informasi identitas,
+/// berupa judul ([title]) dan isinya ([content]).
 class InfoCard extends StatelessWidget {
   final String title;
   final String content;
@@ -79,13 +95,14 @@ class InfoCard extends StatelessWidget {
     return Card(
       elevation: 2.0,
       child: Container(
+        // Lebar kartu menyesuaikan lebar layar agar tiga kartu muat dalam satu baris.
         width: MediaQuery.of(context).size.width / 3.5,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8.0),
-            Text(content),
+            Text(content, textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -93,13 +110,17 @@ class InfoCard extends StatelessWidget {
   }
 }
 
+/// Model data untuk satu tombol aksi di halaman utama.
 class ItemHomepage {
   final String name;
   final IconData icon;
+  final Color color;
 
-  ItemHomepage(this.name, this.icon);
+  ItemHomepage(this.name, this.icon, this.color);
 }
 
+/// Tombol aksi berbentuk kartu. Warna latarnya diambil dari [ItemHomepage.color],
+/// dan saat ditekan akan memunculkan SnackBar berisi nama tombol.
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 
@@ -108,14 +129,18 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).colorScheme.secondary,
+      color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
+        // InkWell memberi efek riak (ripple) saat kartu disentuh.
+        borderRadius: BorderRadius.circular(12),
         onTap: () {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
+              SnackBar(
+                content: Text("Kamu telah menekan tombol ${item.name}!"),
+              ),
             );
         },
         child: Container(
