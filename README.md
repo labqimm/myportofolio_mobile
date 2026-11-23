@@ -52,6 +52,28 @@ Saat tombol ditekan, muncul pesan *"Kamu telah menekan tombol [Nama Tombol]!"* d
 - Halaman dibungkus `SingleChildScrollView`, sehingga bisa di-scroll dan tidak terjadi *overflow* saat isi halaman lebih tinggi dari layar.
 - Lebar grid tombol dibatasi maksimal 600 piksel (`ConstrainedBox`), sehingga tombol tetap berukuran wajar saat dibuka di browser desktop yang lebar.
 
+**Drawer navigasi (`LeftDrawer`)** *(Tutorial 09 & Tugas 8)*
+Menu samping berisi opsi **Home**, **Add Project**, dan **Add Education**. Drawer yang sama dipakai di halaman utama, formulir proyek, dan formulir pendidikan.
+
+**Formulir Tambah Proyek (`ProjectFormPage`)** *(Tutorial 09)*
+Formulir nama, deskripsi, kategori, teknologi, dan tautan proyek. Setelah lolos validasi, isian ditampilkan dalam dialog.
+
+**Formulir Tambah Education (`EducationFormPage`)** *(Tugas 8)*
+Field mengikuti model `Education` di proyek Django:
+
+| Field | Widget | Aturan validasi |
+|---|---|---|
+| Nama Institusi | `TextFormField` | Wajib, tidak boleh hanya spasi, maks. 150 karakter |
+| Jenjang | `DropdownButtonFormField` | Pilihan SD, SMP, SMA/SMK, D3, S1, S2 (default S1) |
+| Jurusan | `TextFormField` | Opsional, tidak boleh hanya spasi, maks. 100 karakter |
+| Tahun Mulai | `TextFormField` (papan ketik angka) | Wajib, 4 digit, antara 1950 dan tahun sekarang |
+| Masih berlangsung | `SwitchListTile` | Jika aktif, Tahun Selesai disembunyikan dan tidak divalidasi |
+| Tahun Selesai | `TextFormField` (papan ketik angka) | Wajib jika sudah lulus, 4 digit, tidak boleh sebelum Tahun Mulai, maks. 10 tahun dari sekarang |
+
+Formulir bisa dibuka dari kartu **Tambah Education** di halaman utama (`Navigator.push`) atau dari opsi **Add Education** di drawer. Tombol **Simpan** memanggil `validate()`; ringkasan isian hanya muncul di `AlertDialog` jika semua input valid. Tombol **OK** menutup dialog dan mengosongkan formulir.
+
+*Fitur tambahan:* switch "Masih berlangsung", ikon di setiap input, penghitung karakter, filter input hanya angka, tombol Simpan lebar penuh, dan lebar formulir dibatasi 600 piksel agar rapi di browser desktop.
+
 ---
 
 ## Tampilan
@@ -102,24 +124,31 @@ Saat aplikasi berjalan di terminal:
 ```
 myportofolio_mobile/
 ├── lib/
-│   ├── main.dart      # Titik masuk aplikasi: MyApp, MaterialApp, dan tema warna
-│   └── menu.dart      # Halaman utama dan komponennya
+│   ├── main.dart                 # Titik masuk aplikasi: MyApp, MaterialApp, dan tema warna
+│   ├── screens/
+│   │   ├── menu.dart             # Halaman utama (MyHomePage, InfoCard, ItemHomepage)
+│   │   ├── project_form.dart     # Formulir Tambah Proyek (Tutorial 09)
+│   │   └── education_form.dart   # Formulir Tambah Education (Tugas 8)
+│   └── widgets/
+│       ├── left_drawer.dart      # Drawer yang dipakai bersama oleh semua halaman
+│       └── project_card.dart     # ItemCard: kartu aksi + navigasi
 ├── test/              # Widget test
 ├── web/, android/, ios/, windows/, linux/, macos/   # Pembungkus native tiap platform
 ├── pubspec.yaml       # Informasi proyek dan dependensi
 └── analysis_options.yaml   # Aturan linter
 ```
 
-Isi `lib/menu.dart`:
+| Kelas | Berkas | Jenis | Fungsi |
+|---|---|---|---|
+| `MyHomePage` | `screens/menu.dart` | `StatelessWidget` | Halaman utama: AppBar, drawer, kartu identitas, dan grid tombol |
+| `InfoCard` | `screens/menu.dart` | `StatelessWidget` | Kartu identitas berisi judul dan isi |
+| `ItemHomepage` | `screens/menu.dart` | Model data | Menyimpan nama, ikon, dan warna sebuah tombol |
+| `ProjectFormPage` | `screens/project_form.dart` | `StatefulWidget` | Formulir tambah proyek |
+| `EducationFormPage` | `screens/education_form.dart` | `StatefulWidget` | Formulir tambah riwayat pendidikan |
+| `LeftDrawer` | `widgets/left_drawer.dart` | `StatelessWidget` | Menu navigasi samping |
+| `ItemCard` | `widgets/project_card.dart` | `StatelessWidget` | Tombol berwarna yang memunculkan SnackBar dan membuka halaman |
 
-| Kelas | Jenis | Fungsi |
-|---|---|---|
-| `MyHomePage` | `StatelessWidget` | Halaman utama: menyusun AppBar, kartu identitas, dan grid tombol |
-| `InfoCard` | `StatelessWidget` | Kartu identitas berisi judul dan isi |
-| `ItemHomepage` | Model data | Menyimpan nama, ikon, dan warna sebuah tombol |
-| `ItemCard` | `StatelessWidget` | Tampilan tombol berwarna yang memunculkan SnackBar |
-
-Pemisahan `main.dart` dan `menu.dart` menerapkan prinsip *separation of concerns*: `main.dart` hanya bertugas menyalakan aplikasi, sedangkan semua tampilan halaman ada di `menu.dart`.
+Pemisahan ini menerapkan prinsip *separation of concerns*: `screens/` berisi halaman utuh, sedangkan `widgets/` berisi komponen yang dipakai ulang di beberapa halaman.
 
 ---
 
@@ -153,6 +182,8 @@ MyApp
 |---|---|---|
 | 8 | Tutorial 08 | Instalasi Flutter SDK, membuat proyek `myportofolio_mobile`, memisahkan `menu.dart` dari `main.dart`, mengubah `MyHomePage` menjadi `StatelessWidget`, membuat `InfoCard` dan `ItemCard` |
 | 8 | Tugas 7 | Identitas pribadi pada `InfoCard`, warna latar unik per tombol lewat atribut `color` di `ItemHomepage`, SnackBar per tombol. **Tambahan:** tombol Lihat Education dan Lihat Experience, tata letak responsif (scroll dan lebar grid dibatasi), komentar dokumentasi pada setiap kelas |
+| 9 | Tutorial 09 | Refactor ke `screens/` dan `widgets/`, `LeftDrawer`, formulir Tambah Proyek dengan validasi dan dialog, navigasi dari kartu aksi |
+| 9 | Tugas 8 | Formulir Tambah Education sesuai model Django, kartu aksi Tambah Education, opsi Add Education di drawer, validasi panjang/tahun/urutan tahun, dialog ringkasan. **Tambahan:** switch "Masih berlangsung", opsi Home memakai `pushAndRemoveUntil` agar stack navigasi bersih |
 
 ---
 
@@ -231,6 +262,33 @@ Masalah yang saya temui selama pengerjaan dan cara mengatasinya:
 
    Hot reload tidak cukup, sehingga perlu hot restart, ketika perubahan menyentuh hal yang hanya dijalankan sekali di awal. Contohnya: mengubah `main()` atau `initState()`, mengubah nilai variabel global atau `static`, mengubah `StatelessWidget` menjadi `StatefulWidget` (atau sebaliknya), atau mengubah definisi enum dan generic. **Full restart** (menghentikan lalu menjalankan ulang aplikasi) diperlukan saat mengubah kode native (Android/iOS), menambah *package* baru di `pubspec.yaml` yang punya kode native, atau mengubah aset dan konfigurasi platform.
 
+### Tugas 8
+
+1. **`Navigator.push()`, `Navigator.pushReplacement()`, dan `Navigator.pop()`.**
+   Navigator menyimpan halaman dalam bentuk tumpukan (*stack*), mirip tumpukan piring.
+   - `push()` menaruh halaman baru di atas tumpukan. Halaman lama tetap ada di bawahnya, sehingga pengguna bisa kembali dengan tombol Back.
+   - `pushReplacement()` mengganti halaman paling atas dengan halaman baru. Halaman lama dibuang, jadi tombol Back tidak akan kembali ke halaman itu.
+   - `pop()` membuang halaman paling atas sehingga pengguna kembali ke halaman di bawahnya. Metode ini juga dipakai untuk menutup dialog.
+
+   Kartu **Tambah Education** di halaman utama memakai `Navigator.push()`, karena pengguna diharapkan kembali ke halaman utama setelah selesai mengisi formulir. Opsi **Add Education** di drawer memakai `pushReplacement()` agar halaman tidak menumpuk setiap kali pengguna berpindah lewat drawer. Untuk opsi **Home**, saya memakai `Navigator.pushAndRemoveUntil(..., (route) => false)`, yaitu membuka `MyHomePage` lalu menghapus semua halaman di bawahnya. Jika memakai `pushReplacement()` seperti di tutorial, alur *Home → kartu Tambah Education → drawer Home* akan menyisakan dua halaman Home di stack, sehingga tombol Back justru membuka Home yang lama. Dengan `pushAndRemoveUntil`, Home selalu menjadi satu-satunya halaman di stack.
+
+2. **Peran `Scaffold`, `AppBar`, dan `Drawer`.**
+   `Scaffold` adalah kerangka halaman yang menyediakan "slot" tetap: `appBar` di atas, `drawer` di samping, dan `body` di tengah. Karena setiap halaman (`MyHomePage`, `ProjectFormPage`, `EducationFormPage`) memakai `Scaffold` dengan susunan yang sama, posisi judul dan menu selalu sama di setiap halaman, sehingga pengguna tidak bingung. `AppBar` menampilkan judul halaman, sedangkan `Drawer` diisi dengan widget `LeftDrawer` yang sama di semua halaman. Akibatnya, menambah satu opsi menu cukup dilakukan di satu berkas.
+
+   Contoh warna tema: `main.dart` mendefinisikan `ColorScheme.fromSeed(seedColor: Colors.indigo)`. Warna primer dari tema ini diambil dengan `Theme.of(context).colorScheme.primary` untuk latar `AppBar` di halaman utama dan di formulir Education. Warna yang sama juga dipakai untuk tombol Simpan, sementara `DrawerHeader` memakai indigo. Jika warna seed diganti, AppBar dan tombol di kedua halaman ikut berubah tanpa perlu diubah satu per satu.
+
+3. **Tata letak formulir.**
+   Formulir disusun dalam satu `Column` vertikal karena urutan pengisian data pendidikan alami dari atas ke bawah: institusi, jenjang, jurusan, lalu tahun. `crossAxisAlignment: CrossAxisAlignment.stretch` membuat setiap input dan tombol Simpan selebar formulir, sehingga mudah ditekan di HP.
+   - **Widget pengatur jarak:** `Padding` memberi ruang di tepi layar, dan `SizedBox(height: ...)` memberi jarak antar-input agar label dan pesan error tidak berdempetan. `ConstrainedBox(maxWidth: 600)` di dalam `Center` membatasi lebar formulir agar input tidak terlalu panjang di browser desktop.
+   - **Widget penggulir:** `SingleChildScrollView` membuat seluruh formulir bisa di-scroll. Ini penting saat layar sempit atau saat papan ketik muncul dan menutupi setengah layar. Tanpa penggulir, `Column` yang terlalu tinggi akan *overflow* dan tombol Simpan tidak bisa dijangkau. Dengan penggulir, pengguna cukup menggeser layar untuk mencapai tombol tersebut.
+
+4. **`GlobalKey<FormState>`, `validator`, dan `validate()`.**
+   - `GlobalKey<FormState>` adalah "pegangan" ke widget `Form`. Lewat `_formKey.currentState`, tombol Simpan yang berada di luar setiap input bisa memerintahkan seluruh formulir sekaligus.
+   - `validator` adalah fungsi aturan di setiap `TextFormField`. Fungsi ini mengembalikan `null` jika isian valid, atau teks pesan error jika tidak valid.
+   - `validate()` menjalankan semua `validator` di dalam formulir. Pesan error langsung ditampilkan di bawah kolom yang salah, lalu fungsi ini mengembalikan `true` hanya jika semua kolom valid. Karena itu dialog ringkasan saya letakkan setelah `if (!_formKey.currentState!.validate()) return;`, sehingga dialog hanya muncul jika semua input lolos validasi.
+
+   Contoh nilai yang ditolak: **Tahun Mulai `2024` dan Tahun Selesai `2020`**. Kolom tahun sudah memakai `TextInputType.number` dan `FilteringTextInputFormatter.digitsOnly`, sehingga pengguna hanya bisa mengetik angka. Tetapi papan ketik dan filter hanya mengatur *jenis karakter*. Keduanya tidak tahu *arti* angkanya, sehingga tahun selesai yang lebih awal dari tahun mulai, tahun `1800`, atau tahun mulai di masa depan tetap bisa diketik. Lagi pula, di Chrome desktop papan ketik angka tidak berlaku sama sekali. Aturan yang menyangkut makna data (rentang tahun, urutan tahun, isian yang hanya berisi spasi) hanya bisa diperiksa oleh `validator`.
+
 ---
 
 ## AI Disclosure
@@ -271,3 +329,19 @@ Ringkasan prompt yang saya gunakan:
 - **Kode awal menimbulkan bug tata letak.** Versi pertama `menu.dart` dari AI mengalami *overflow* saat dibuka di browser desktop yang lebar, karena AI tidak memperhitungkan ukuran layar selain HP. Bug ini baru ketahuan setelah saya menjalankan aplikasinya sendiri.
 - **Perkiraan alur instalasi kurang tepat.** AI mengira akan langsung muncul tombol *Download SDK*, padahal VS Code lebih dulu menampilkan pilihan template proyek.
 - **Konteks lingkungan perlu diberikan secara eksplisit.** Masalah folder `build` yang terkunci baru bisa didiagnosis setelah AI melihat path proyek di screenshot (folder OneDrive), sehingga screenshot yang lengkap sangat membantu.
+
+### Tugas 8
+**Bagian yang dibantu AI:** kerangka `education_form.dart` (field disesuaikan dengan model `Education` di repo Django saya), fungsi validator, penambahan kartu aksi dan opsi drawer, perubahan opsi Home menjadi `pushAndRemoveUntil`, serta draf jawaban reflektif dan pembaruan README.
+
+**Prompt yang saya gunakan:**
+1. "coba kerjakan dengan memberikan step by step untuk saya copy dan ikuti dan sesuaikan dengan progress saya" (lampiran PDF Tugas 8)
+
+Agar hasilnya sesuai progres saya, AI membaca repositori publik `myportofolio_mobile` (kode hasil Tutorial 09) dan `models.py` di repositori Django, lalu menyesuaikan nama field dan batas panjang dengan model yang sudah ada.
+
+**Keterbatasan AI yang saya temui:**
+- AI tidak bisa menjalankan `flutter analyze` maupun `flutter run` karena lingkungannya tidak dapat mengunduh Flutter SDK dan paket dari pub.dev. Semua kode harus saya uji sendiri.
+- Versi pertama fungsi reset formulir ikut mengembalikan jenjang ke S1. Karena dropdown memakai `initialValue`, tampilan dropdown dan variabel `_level` bisa tidak sinkron setelah reset. Bagian ini kemudian diubah agar jenjang tidak ikut di-reset.
+- Alur Home dari tutorial (`pushReplacement`) menyisakan halaman Home ganda di stack. Hal ini perlu dicek dengan menekan tombol Back setelah kembali ke Home.
+
+
+Link CHAT AI : https://claude.ai/share/2caf59a6-4a74-4b38-8aec-5fe35d10c3f1

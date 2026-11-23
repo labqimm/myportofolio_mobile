@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+  import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
@@ -20,6 +20,7 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue),
     ItemHomepage("Tambah Proyek", Icons.add_circle, Colors.green),
     ItemHomepage("Lihat Education", Icons.school, Colors.purple),
+    ItemHomepage("Tambah Education", Icons.post_add, Colors.orange),
     ItemHomepage("Lihat Experience", Icons.work, Colors.teal),
     ItemHomepage("Logout", Icons.logout, Colors.red),
   ];
