@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/education_form.dart';
 
 /// Tombol aksi berbentuk kartu. Warna latarnya diambil dari [ItemHomepage.color].
 ///
@@ -36,7 +37,15 @@ class ItemCard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const ProjectFormPage()),
             );
+          }else if (item.name == "Tambah Education") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EducationFormPage(),
+              ),
+            );
           }
+          
         },
         child: Container(
           padding: const EdgeInsets.all(8),
