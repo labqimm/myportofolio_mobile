@@ -33,7 +33,14 @@ class _EducationFormPageState extends State<EducationFormPage> {
   final int _currentYear = DateTime.now().year;
 
   // Pilihan jenjang, sama dengan LEVEL_CHOICES di model Django.
-  static const List<String> _levels = ['SD', 'SMP', 'SMA/SMK', 'D3', 'S1', 'S2'];
+  static const List<String> _levels = [
+    'SD',
+    'SMP',
+    'SMA/SMK',
+    'D3',
+    'S1',
+    'S2',
+  ];
 
   // Variabel penyimpan isi setiap field.
   String _institution = "";
